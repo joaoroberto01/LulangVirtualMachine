@@ -28,10 +28,10 @@ public class Instruction {
     }
     private static String getInstructionRange(String string, int beginIndex, int endIndex) {
         try {
-            return string.substring(beginIndex, endIndex);
+            return string.substring(beginIndex, endIndex).trim();
         } catch (Exception e) {
             if (beginIndex < string.length()) {
-                return string.substring(beginIndex);
+                return string.substring(beginIndex).trim();
             }
             return "";
         }

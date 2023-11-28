@@ -7,7 +7,7 @@ public class VirtualMachineApplication {
         try {
             VirtualMachine.initialize(filepath);
         } catch (NoSuchFileException e) {
-            System.err.printf("file '%s' not found%n", filepath);
+            System.err.printf("file '%s' not found\n", filepath);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
