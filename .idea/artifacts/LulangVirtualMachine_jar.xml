@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="LulangVirtualMachine:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LulangVirtualMachine_jar</output-path>
+    <root id="archive" name="virtual_machine.jar">
+      <element id="module-output" name="LulangVirtualMachine" />
+    </root>
+  </artifact>
+</component>
