@@ -21,6 +21,7 @@ public class VirtualMachine {
             Instruction instruction = codeSegment.get(pc++);
             executing = execute(instruction);
         } while (executing);
+        System.out.println("acabou!");
     }
 
     private static boolean execute(Instruction instruction) {
@@ -34,27 +35,31 @@ public class VirtualMachine {
             case "LDC":
                 s++;
                 value = Integer.parseInt(instruction.operand1);
-                memorySegment.set(s, value);
+                memorySegment.push(value);
                 break;
             case "LDV":
                 s++;
                 value = memorySegment.get(Integer.parseInt(instruction.operand1));
-                memorySegment.set(s, value);
+                memorySegment.push(value);
                 break;
             case "ADD":
                 memorySegment.set(s - 1, memorySegment.get(s - 1) + memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "SUB":
                 memorySegment.set(s - 1, memorySegment.get(s - 1) - memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "MULT":
                 memorySegment.set(s - 1, memorySegment.get(s - 1) * memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "DIV":
                 memorySegment.set(s - 1, memorySegment.get(s - 1) / memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "INV":
@@ -64,11 +69,13 @@ public class VirtualMachine {
             case "AND":
                 value = memorySegment.get(s - 1) == 1 && memorySegment.get(s) == 1 ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "OR":
                 value = memorySegment.get(s - 1) == 1 || memorySegment.get(s) == 1 ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "NEG":
@@ -77,36 +84,43 @@ public class VirtualMachine {
             case "CME":
                 value = memorySegment.get(s - 1) < memorySegment.get(s) ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "CMA":
                 value = memorySegment.get(s - 1) > memorySegment.get(s) ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "CEQ":
                 value = memorySegment.get(s - 1).equals(memorySegment.get(s)) ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "CDIF":
                 value = memorySegment.get(s - 1).equals(memorySegment.get(s)) ? 0 : 1;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "CMEQ":
                 value = memorySegment.get(s - 1) <= memorySegment.get(s) ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "CMAQ":
                 value = memorySegment.get(s - 1) >= memorySegment.get(s) ? 1 : 0;
                 memorySegment.set(s - 1, value);
+                memorySegment.pop();
                 s--;
                 break;
             case "STR":
                 int address = Integer.parseInt(instruction.operand1);
                 memorySegment.set(address, memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "JMP":
@@ -117,6 +131,7 @@ public class VirtualMachine {
                     pc = Integer.parseInt(instruction.operand1);
                 }
                 //TODO senao pc = pc + 1
+                memorySegment.pop();
                 s--;
                 break;
             case "RD":
@@ -124,10 +139,11 @@ public class VirtualMachine {
                 value = scanner.nextInt();
 
                 s++;
-                memorySegment.add(s, value);
+                memorySegment.push(value);
                 break;
             case "PRN":
                 System.out.println(memorySegment.get(s));
+                memorySegment.pop();
                 s--;
                 break;
             case "ALLOC":
@@ -135,7 +151,15 @@ public class VirtualMachine {
                 for (int i = 0; i < n; i++) {
                     s++;
                     value = Integer.parseInt(instruction.operand1);
-                    memorySegment.add(s);//;, memorySegment.get(value + i));
+                    try {
+                        memorySegment.set(s,memorySegment.get(value + i));
+
+                    }
+                    catch (Exception e)
+                    {
+                        memorySegment.push(-1);
+                    }
+
                     //FIXME vai dar merda
                 }
                 break;
@@ -144,16 +168,18 @@ public class VirtualMachine {
                 for (int i = n - 1; i >= 0; i--) {
                     value = Integer.parseInt(instruction.operand1);
                     memorySegment.set(value + i, memorySegment.get(s));
+                    memorySegment.pop();
                     s--;
                 }
                 break;
             case "CALL":
                 s++;
-                memorySegment.add(s, pc++);
+                memorySegment.push(pc++);
                 pc = Integer.parseInt(instruction.operand1);
                 break;
             case "RETURN":
                 pc = memorySegment.get(s);
+                memorySegment.pop();
                 s--;
                 break;
         }
