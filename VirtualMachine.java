@@ -57,7 +57,7 @@ public class VirtualMachine {
                 memorySegment.pop();
                 s--;
                 break;
-            case "DIV":
+            case "DIVI":
                 memorySegment.set(s - 1, memorySegment.get(s - 1) / memorySegment.get(s));
                 memorySegment.pop();
                 s--;
@@ -151,16 +151,10 @@ public class VirtualMachine {
                 for (int i = 0; i < n; i++) {
                     s++;
                     value = Integer.parseInt(instruction.operand1);
-                    try {
-                        memorySegment.set(s,memorySegment.get(value + i));
-
+                    memorySegment.push(0);//TODO NAO É NECESSARIO (USAR 0)
+                    if (value + i < memorySegment.size()) {
+                        memorySegment.set(s, memorySegment.get(value + i));
                     }
-                    catch (Exception e)
-                    {
-                        memorySegment.push(-1);
-                    }
-
-                    //FIXME vai dar merda
                 }
                 break;
             case "DALLOC":
