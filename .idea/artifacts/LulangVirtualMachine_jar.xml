@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/LulangVirtualMachine_jar</output-path>
     <root id="archive" name="virtual_machine.jar">
       <element id="module-output" name="LulangVirtualMachine" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/gson-2.10.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

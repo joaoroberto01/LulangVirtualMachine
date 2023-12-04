@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,19 +14,33 @@ public class VirtualMachine {
     private static int s, pc = 0;
 
     private static List<Instruction> codeSegment;
+
+    private static boolean stepExecution;
+
+    public static Scanner scanner = new Scanner(System.in);
     public static void initialize(String filepath) throws IOException {
         String code = readFileAsString(filepath);
         codeSegment = preProcess(code);
 
+        Event.notifyCodeSetup(codeSegment);
+        scanner.reset();
+
+        stepExecution = scanner.nextInt() != 0;
+
         boolean executing;
         do {
+            Event.notifyInstructionFetch(pc);
             Instruction instruction = codeSegment.get(pc++);
             executing = execute(instruction);
+            Event.notifyInstructionExecute(memorySegment);
+            if (stepExecution) {
+                stepExecution = scanner.nextInt() != 0;
+            }
         } while (executing);
+        Event.notifyFinish();
         System.out.println("acabou!");
     }
-
-    private static boolean execute(Instruction instruction) {
+    private static boolean execute(Instruction instruction) throws IOException {
         int value, n;
         switch (instruction.name) {
             case "START":
@@ -135,14 +151,19 @@ public class VirtualMachine {
                 s--;
                 break;
             case "RD":
-                Scanner scanner = new Scanner(System.in);
-                value = scanner.nextInt();
+                Event.notifyInput();
+                try {
+                    value = scanner.nextInt();
 
-                s++;
-                memorySegment.push(value);
+                    s++;
+                    memorySegment.push(value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case "PRN":
-                System.out.println(memorySegment.get(s));
+                Event.notifyOutput(memorySegment.get(s).toString());
                 memorySegment.pop();
                 s--;
                 break;
@@ -151,7 +172,7 @@ public class VirtualMachine {
                 for (int i = 0; i < n; i++) {
                     s++;
                     value = Integer.parseInt(instruction.operand1);
-                    memorySegment.push(0);//TODO NAO É NECESSARIO (USAR 0)
+                    memorySegment.push(0);
                     if (value + i < memorySegment.size()) {
                         memorySegment.set(s, memorySegment.get(value + i));
                     }
