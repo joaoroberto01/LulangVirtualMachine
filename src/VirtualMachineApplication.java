@@ -1,3 +1,5 @@
+package src;
+
 import java.nio.file.NoSuchFileException;
 
 public class VirtualMachineApplication {
