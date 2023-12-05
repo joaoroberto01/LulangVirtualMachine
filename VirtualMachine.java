@@ -1,9 +1,6 @@
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Stack;
@@ -221,7 +218,9 @@ public class VirtualMachine {
     private static void replaceLabel(List<Instruction> instructions, Instruction replaceInstruction, int address) {
         for (Instruction instruction : instructions) {
             if (instruction.name.trim().equals("JMP") || instruction.name.trim().equals("JMPF") || instruction.name.trim().equals("CALL")) {
-                instruction.operand1 = instruction.operand1.replace(replaceInstruction.label.trim(), String.valueOf(address));
+                if (instruction.operand1.trim().equals(replaceInstruction.label.trim())) {
+                    instruction.operand1 = String.valueOf(address);
+                }
             }
         }
         replaceInstruction.label = String.valueOf(address);

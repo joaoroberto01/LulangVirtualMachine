@@ -4,7 +4,6 @@ public class VirtualMachineApplication {
 
     public static  void main(String[] args){
         String filepath = args.length == 0 ? "x.obj" : args[0];
-        //String filepath = args.length == 0 ? "x.obj" : args[0];
         try {
             VirtualMachine.initialize(filepath);
         } catch (NoSuchFileException e) {
